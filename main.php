@@ -34,11 +34,11 @@ if($_SESSION['user_info']['fn1']!="1")
 								<i class="fa fa-print"></i> บันทึกและพิมพ์ [F12]
 							</a>
 							
-							<?if($_SESSION['user_info']['fn4']=="1") { ?>	 
+							<?php if($_SESSION['user_info']['fn4']=="1") { ?>	 
 							<a class="btn btn-app bg-olive" id="b-return"  >
 								<i class="fa fa-retweet"></i> คืนสินค้า [F5]
 							</a>
-							<?}?>
+							<?php }?>
 							<a class="btn btn-app bg-orange" id="b-del"  >
 								<i class="fa fa-remove"></i> ลบสินค้า [Del]
 							</a>
@@ -241,7 +241,7 @@ if($_SESSION['user_info']['fn1']!="1")
 								<div class="col-sm-4 border-right pad-5">
 									<div class="description-block">
 										<h5 class="description-header"><i class="fa fa-user"></i> ตำแหน่ง</h5>
-										<span class="description-text" id="m-role"><? echo $pos_role?></span>
+										<span class="description-text" id="m-role"><?php echo $pos_role?></span>
 									</div>
 								</div>
 
@@ -732,7 +732,7 @@ if($_SESSION['user_info']['fn1']!="1")
 			total_amount :	$("#p-total-sum").val(),
 			total_discount : $("#p-total-dis").val(),
 			sale_status :	sale_status,
-			user_id : '<? echo $pos_user_id?>',
+			user_id : '<?php echo $pos_user_id?>',
 			pay : getPriceFormat($("#p-pay").val()),
 			change : $('#p-change').val(),
 			items: JSON.stringify(dataList)  
@@ -1012,7 +1012,7 @@ if($_SESSION['user_info']['fn1']!="1")
 	
     function loadReturnList(){
 		var data = {
-			user_id : '<? echo $pos_user_id?>',
+			user_id : '<?php echo $pos_user_id?>',
 		 }
 
 		$.ajax({

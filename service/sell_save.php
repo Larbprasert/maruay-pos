@@ -30,6 +30,8 @@
 			,'".$priceType."' ,'".$total_discount."','".$total_amount."' ,NULL,'".$user_id."' 
 			,NOW(),'".$sale_status."',NOW(), '".$user_id."' ,'".$pay."', '".$change."' ) ";
 
+			// echo $query_insert;
+
 			$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
 
 			if($objQuery){

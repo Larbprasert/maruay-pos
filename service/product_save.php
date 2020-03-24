@@ -42,7 +42,7 @@
 				{
 					$strSQL = "INSERT INTO tb_image ";
 					$strSQL .="(product_id,img_name,img_path, createdate) VALUES ('".$last_id."','".$filename."','".$filepath."',now() )";
-					mysqli_query($conn,$strSQL);
+					mysqli_query($connection,$strSQL);
 					// echo "Copy/Upload ".$_FILES["fileUpload".$i]["name"]." completed.<br>";
 				}
 			}
