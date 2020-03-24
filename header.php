@@ -89,13 +89,13 @@
 			<a href="#" class="logo">
 				<!-- mini logo for sidebar mini 50x50 pixels -->
 				<span class="logo-mini">
-					<b><? echo $pos_name; ?></b>
+					<b><?php echo $pos_name; ?></b>
 				</span>
 					
-			   <span class="logo-lg"> <b><? echo $pos_name; ?></b> 
+			   <span class="logo-lg"> <b><?php echo $pos_name; ?></b> 
 
 			   </span>
-				<!-- logo for regular state and mobile devices -->
+				<!-- logo for regular state and mobile devices
 <!-- 				<span class="logo-lg"> -->
 <!-- 				</span> -->
 			</a>
@@ -113,7 +113,7 @@
 				<div class="collapse navbar-collapse pull-left" id="navbar-collapse">
 				<ul class="nav navbar-nav">
 
-				<? if($_SESSION['user_info']['fn1']=="1") { ?>
+				<?php if($_SESSION['user_info']['fn1']=="1") { ?>
 					<li id="menu-main">
 							<a href="<?php echo $uri; ?>main.php">
 	 							<i class="fa  fa-barcode fa-lg"></i> 
@@ -121,7 +121,7 @@
 							</a>
 					</li>
 				  
-				<? } 
+				<?php } 
 				
 				if($_SESSION['user_info']['fn2']=="1") { ?>
 					 <li id="menu-stock">
@@ -130,7 +130,7 @@
 								<span class="l-menu" >คลังสินค้า</span>
 							</a>
 					</li>
-				<? } 
+				<?php } 
 				if($_SESSION['user_info']['fn3']=="1") { ?>
 					 <li id="menu-summary" >
 							<a href="<?php echo $uri; ?>summary.php">
@@ -138,7 +138,7 @@
 								<span class="l-menu" >สรุปยอดการขาย</span>
 							</a>
 					</li>
-				<? } 
+				<?php } 
 				if($_SESSION['user_info']['fn4']=="1") { ?>	 
 
 					<li class="dropdown" id="menu-setting">
@@ -153,7 +153,7 @@
 						<li><a href="<?php echo $uri; ?>setting_param.php"><i class="fa  fa-list-ul "></i> ตั้งค่าพารามิเตอร์พื้นฐาน</a></li>
 					</ul>
 					</li>
-				<? }   ?>		 
+				<?php }   ?>		 
 
 
 					 
@@ -169,15 +169,15 @@
 						<li class="dropdown notifications-menu">
 							<a href="#" >
 							<i class="fa fa-print"> </i> 
-							<? if($printer_status=="1") {?>
-							<span class="label label-success"  id="printok"  >
+							<?php if($printer_status=="1") {?>
+							<span class="label label-success"  id="printok" title="<?php echo $printer;?>" >
 								<i class="fa fa-check "></i>
 							</span>
-							<? } else {?>
+							<?php } else {?>
 							<span class="label label-danger"  id="printnok">
-								<i class="fa fa-exclamation"></i>< 
+								<i class="fa fa-exclamation"></i>
 							</span>
-							<?  } ?>
+							<?php  } ?>
 							</a> 
 						</li>
 
@@ -232,7 +232,7 @@
 		
 	<script type="text/javascript">
 
-	var cPath = '<? echo $uri; ?>';
+	var cPath = '<?php echo $uri; ?>';
 
 	var url = window.location;
 	
@@ -301,14 +301,16 @@
 	
 <script>
 
-var _PRINT_CONFIRM = <? echo $pos_print_cf;?> ;
-var _REST_CONFIRM = <? echo $pos_rest_cf;?> ;
+var _PRINT_CONFIRM = <?php echo $pos_print_cf;?> ;
+var _REST_CONFIRM = <?php echo $pos_rest_cf;?> ;
 
 function getInteger(str){
 	return /^\d+$/.test(str);
 }
 
 function getPriceTxt(text){
+// console.log("getPriceTxt : "+text);
+
 	if(isNaN(parseFloat(text))){
 		return 0;
 	}else{
@@ -317,6 +319,7 @@ function getPriceTxt(text){
 }
 
 function getPriceFormat(text){
+	// console.log("getPriceFormat : "+text);
 	if(isNaN(parseFloat(text))){
 		return 0.00;
 	}else{

@@ -112,7 +112,7 @@
 
 		$.ajax({
 			url: "service/product_service.php?method=search_rest_count",
-			data:{ user_id : '<? echo $pos_user_id?>' }
+			data:{ user_id : '<?php echo $pos_user_id?>' }
 		}).done(function (result) {
 			productRestTable.clear().draw();
 			productRestTable.rows.add(result).draw();

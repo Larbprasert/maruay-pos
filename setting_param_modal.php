@@ -99,7 +99,7 @@
 		$.ajax({
             type: 'POST',
 			data: $('#param-form').serialize(),
-            url: 'service/param_service.php?method='+method+'&type='+p_type+'&user_id='+'<? echo $pos_user_id?>',
+            url: 'service/param_service.php?method='+method+'&type='+p_type+'&user_id='+'<?php echo $pos_user_id?>',
             success: function(data) {
 
                 // console.log(data['status']);

@@ -1,6 +1,6 @@
 <?php include 'header.php' ;?>
 
-<? 
+<?php 
 
 if($_SESSION['user_info']['fn4']!="1")
 {

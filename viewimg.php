@@ -5,8 +5,8 @@
 	header('Content-type: image/jpeg');
 
 	$strSQL = " SELECT * FROM tb_files WHERE file_id = ".$_GET["file_id"];
-	$objQuery = mysql_query($strSQL) or die ("Error Query [".$strSQL."]");
-	$objResult = mysql_fetch_array($objQuery);
+	$objQuery = mysqli_query($connection,$strSQL) or die ("Error Query [".$strSQL."]");
+	$objResult = mysqli_fetch_array($objQuery);
 
 	echo $objResult["name"];
 

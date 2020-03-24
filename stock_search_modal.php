@@ -27,7 +27,7 @@
                               <!-- <form class="form-horizontal " method="post" action="edit_user_pro.php" > -->
 
                               	<!-- <input type="hidden" id="check_update" name="check_update" value="1"> -->
-                                <!-- <input type="hidden" id="emp_id" name="emp_id" value="<? echo $user['emp_id']?>"> -->
+                                <!-- <input type="hidden" id="emp_id" name="emp_id" value="<?php echo $user['emp_id']?>"> -->
                                 
 									<!-- ID -->	
 									<div class="input-group">

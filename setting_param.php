@@ -1,7 +1,7 @@
 <?php include 'header.php' ;?>
 
 
-<? 
+<?php 
 
 if($_SESSION['user_info']['fn4']!="1")
 {
@@ -206,7 +206,7 @@ if($_SESSION['user_info']['fn4']!="1")
 					$.ajax({
 						type: 'POST',
 						data: { code : code },
-						url: 'service/param_service.php?method=delete&type='+type+'&user_id='+'<? echo $pos_user_id?>',
+						url: 'service/param_service.php?method=delete&type='+type+'&user_id='+'<?php echo $pos_user_id?>',
 						success: function(data) {
 							swal.close();
 							$.notify(" ลบรายการ "+title+" [ "+product_Name+" ] สำเร็จ !", "success");

@@ -158,7 +158,7 @@
 		$.ajax({
             type: 'POST',
 			data: $('#user-form').serialize(),
-            url: 'service/user_service.php?method='+method+'&user_id='+'<? echo $pos_user_id?>',
+            url: 'service/user_service.php?method='+method+'&user_id='+'<?php echo $pos_user_id?>',
             success: function(data) {
 
                 // console.log(data['status']);

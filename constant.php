@@ -30,33 +30,33 @@
 			'P2' => 'ราคาขายพิเศษ 2'
 		); 
 
-	$sql_conf = "  SELECT VALUE AS PRINT_CONFIRM FROM tb_PosNum WHERE TYPE = 'PRINT_CONFIRM' " ;	
-	$q_list_conf = mysqli_query($conn,$sql_conf) or die("Could not query");
+	$sql_conf = "  SELECT VALUE AS PRINT_CONFIRM FROM tb_PosNum WHERE TYPE = 'PRINT_CONFIRM' " ;
+	$q_list_conf = mysqli_query($connection,$sql_conf) or die("Could not query");
 	while($result = mysqli_fetch_array($q_list_conf)) {
 		$pos_print_cf = $result['PRINT_CONFIRM'];
-	}
+	 }
 
 	$sql_conf = "  SELECT VALUE AS REST_CONFIRM FROM tb_PosNum WHERE TYPE = 'REST_CONFIRM' " ;
-	$q_list_conf = mysqli_query($conn,$sql_conf) or die("Could not query");
+	$q_list_conf = mysqli_query($connection,$sql_conf) or die("Could not query");
 	while($result = mysqli_fetch_array($q_list_conf)) {
 		$pos_rest_cf = $result['REST_CONFIRM'];
-	}
+	 }
 	 
 	$sql_conf = "  SELECT VALUE AS POS_NAME FROM tb_PosNum WHERE TYPE = 'POS_NAME' " ;
-	$q_list_conf = mysqli_query($conn,$sql_conf) or die("Could not query");
+	$q_list_conf = mysqli_query($connection,$sql_conf) or die("Could not query");
 	while($result = mysqli_fetch_array($q_list_conf)) {
 		$pos_name = $result['POS_NAME'];
-	}
+	 }
  
 
-	if(isset($_SESSION['user_info'])) {
+	 if(isset($_SESSION['user_info'])) {
 
 		$pos_user_id = $_SESSION['user_ID'];
 		$pos_user_nane = $_SESSION['user_ID'];
 		$pos_user = $_SESSION['full_name'];
 		$pos_role = $_SESSION['role'];
 			 
-	}
+	 }
 
 
 ?> 

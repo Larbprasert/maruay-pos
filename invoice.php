@@ -9,6 +9,10 @@ if($_SESSION['user_info']['fn1']!="1")
 		exit();
 }
 
+
+$inv_no = $_REQUEST['inv'];
+
+
 ?>
 
 <div class="content-wrapper">
@@ -24,15 +28,15 @@ if($_SESSION['user_info']['fn1']!="1")
 					<div class="box-body bg-bw">
 
 						 
-							<a class="btn btn-app bg-red" id="b-return-all"    >
-								<i class="fa fa-trash-o"></i> คืนสินค้าทั้งหมด (ยกเลิกบิล)
-							</a>
-
-						 
 							<a class="btn btn-app bg-teal" id="b-refresh"    >
 								<i class="fa fa-refresh"></i> ค้นหาอีกครั้ง (ล้างข้อมูล)
 							</a>
 
+							<a class="btn btn-app bg-green" id="b-print-all"  >
+								<i class="fa fa-print"></i> พิมพ์ใบกำกับภาษี
+							</a>
+
+						 
 
 							<a class="btn btn-app bg-purple pull-right" id="b-sell-return"  onclick="location='main.php'">
 							<!-- <span class="badge bg-green">0</span> -->
@@ -71,10 +75,10 @@ if($_SESSION['user_info']['fn1']!="1")
 
 						<div class="col-xs-8">
 							<div class="input-group">
-								<span class="input-group-addon"> <strong> INV-  </strong>
+								<span class="input-group-addon"> <strong> INV- </strong>
 								</span>
 								<input type="text" class="form-control input-lg input-p"
-								id="search" name="search" placeholder="เลขที่ใบเสร็จ " >
+								id="search" name="search" placeholder="เลขที่ใบเสร็จ "   >
 								<span class="input-group-btn">
 									<button type="button" class="btn btn-info input-lg btn-lg" id="btn-search">
 										<i class="fa fa-search"></i> ค้นหาใบเสร็จ [ENTER]</button>
@@ -192,8 +196,91 @@ if($_SESSION['user_info']['fn1']!="1")
 
 
 
+<div class="modal fade" tabindex="-1" role="dialog" id="invoiceModal" data-backdrop="static">
+   <div class="modal-dialog   ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                 <h4 class="modal-title"><i class="fa fa-print"></i> พิมพ์ใบกำกับภาษี </h4>
+           
+                 
+            </div>
+
+			      <form class="form-horizontal " method="post" action="invoice-print.php" target="_blank" id="invoice-form" >
+								
+            <div class="modal-body">
+             <div class="row">
+				<div class="col-md-12" >
+ 
+
+                        
+								<!-- New Row  -->
+					 
+  
+									  <div class="form-group">
+										<label class="col-sm-4 control-label">ชื่อลูกค้า <font color="#FF0000" size="+1">*</font></label>
+										<div class="col-sm-8">
+											<!-- <input type="text" id="" name="" class="form-control" value=""> -->
+												<input type="text" id="u_name" name="u_name" class="form-control required" required>
+												<input type="hidden"  id="u_inv" name="inv" class="form-control" >
+										</div>
+									</div>
+									
+									
+									
+									<div class="form-group">
+										<label class="col-sm-4 control-label">ที่อยู่ <font color="#FF0000" size="+1">*</font></label>
+										<div class="col-sm-8">
+											<!-- <input type="text" id="" name="" class="form-control" value=""> -->
+												<textarea  id="u_addr" name="u_addr" class="form-control required" required></textarea>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-4 control-label">โทรศัพท์ <font color="#FF0000" size="+1">*</font></label>
+										<div class="col-sm-8">
+											<!-- <input type="text" id="" name="" class="form-control" value=""> -->
+												<input type="text" id="u_tel" name="u_tel" class="form-control required" required>
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-4 control-label">อีเมล   </label>
+										<div class="col-sm-8">
+											<!-- <input type="text" id="" name="" class="form-control" value=""> -->
+												<input type="text" id="u_mail" name="u_mail" class="form-control">
+										</div>
+									</div>
+									
+ 
+
+
+				  </div>
+				  </div>
+				  </div>
+            <div class="modal-footer">
+            
+            	<button type="button"  onclick="doPrint()"   class="btn btn-primary" >
+					<i class="fa fa-print"></i>&nbsp; พิมพ์ </button>
+            	
+                <button type="button" class="btn btn-warning" data-dismiss="modal">
+					<i class="fa fa-remove"></i>&nbsp; ยกเลิก</button>
+            </div>
+
+			
+			</form>
+
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+</div>
+
+
 
 <?php include 'footer.php' ;?>
+
+
 
 <script >
 
@@ -348,6 +435,11 @@ if($_SESSION['user_info']['fn1']!="1")
 		return /^\d+$/.test(str);
 	}
 
+	function doPrint(){
+ 		$('#invoice-form').submit();
+		location = 'invoice.php';
+	}
+
 
 	
 	function loadProduct(name){
@@ -390,9 +482,10 @@ if($_SESSION['user_info']['fn1']!="1")
 
 		calPrice();
 
-		rsTable.clear().draw();
-		rsTable.rows.add(dataList).draw();
-
+		if(rsTable){
+				rsTable.clear().draw();
+				rsTable.rows.add(dataList).draw();
+		}
 		// $('#search').val("");
 
 		$('#total-txt').html(dataList.length);
@@ -424,26 +517,28 @@ if($_SESSION['user_info']['fn1']!="1")
 	
 
 
-	function validItem() {	
-		if(rsTable.data().length > 0){
-			return true;
-		}else{
-			swal("","ไม่พบรายการสินค้า !", "warning");
-			return false;
-		}
 
-	};
+
+	// function validItem() {	
+	// 	if(rsTable.data().length > 0){
+	// 		return true;
+	// 	}else{
+	// 		swal("","ไม่พบรายการสินค้า !", "warning");
+	// 		return false;
+	// 	}
+
+	// };
 
  
-	 function delItem(){
-		if(rsTable.data().length > 0 &&  rsTable.$('tr.selected').hasClass('selected')){
-			var rowi = rsTable.row('.selected').index();
-			dataList.splice(rowi, 1); 
-			 doSearch();
-		}else{
-			swal("","กรุณาเลือกรายการสินค้า !", "warning");
-		}
-	 }
+	//  function delItem(){
+	// 	if(rsTable.data().length > 0 &&  rsTable.$('tr.selected').hasClass('selected')){
+	// 		var rowi = rsTable.row('.selected').index();
+	// 		dataList.splice(rowi, 1); 
+	// 		 doSearch();
+	// 	}else{
+	// 		swal("","กรุณาเลือกรายการสินค้า !", "warning");
+	// 	}
+	//  }
 
 
 	$(document).keydown(function(e) {
@@ -482,12 +577,15 @@ if($_SESSION['user_info']['fn1']!="1")
 
 	
 
-	$('#b-return-all').click( function () {
+	$('#b-print-all').click( function () {
 
 		if(rsTable.data().length > 0){
-			doReturn();
+			// doReturn();
+
+			$("#invoiceModal").modal(); 
+
 		}else{
-			swal("","ไม่พบรายการ คืนสินค้า !", "warning");
+			swal("","ไม่พบรายการ ขายสินค้า !", "warning");
 		}
 
 
@@ -496,7 +594,7 @@ if($_SESSION['user_info']['fn1']!="1")
 	
 
 	$('#b-refresh').click( function () {
-			location = 'return.php';
+			location = 'invoice.php';
 
 	});
 	
@@ -507,7 +605,7 @@ if($_SESSION['user_info']['fn1']!="1")
 			items: JSON.stringify(dataList)  
 		 }
 
-		 console.log(data);
+		//  console.log(data);
 		
 		$.ajax({
 				data: data,
@@ -558,11 +656,20 @@ if($_SESSION['user_info']['fn1']!="1")
 
 	$(document).ready(function(){
 
-		$("#menu-main").addClass("active"); 
+		$("#menu-summary").addClass("active"); 
 
 		$("#search").on('keyup', function (e) {
 				if (/\D/g.test(this.value)) this.value = this.value.replace(/\D/g,'')
 		});
+
+		var inv_no = '<?php echo $inv_no; ?>' ;
+		console.log(inv_no);
+		if(inv_no != ""){
+			inv_no  = inv_no.replace('INV-','');
+			$("#search").val(inv_no);
+			$("#u_inv").val('INV-'+inv_no);
+			loadProduct(inv_no);
+		}
 
 
 		// $("#saleHeader_ID").inputFilter(function(value) {

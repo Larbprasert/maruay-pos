@@ -11,8 +11,7 @@
 
 			$sql = " select * from tb_Employee order by employee_ID " ;
 
-			//$q_list = mysql_query($sql) or die("Could not query");
-			$q_list = mysqli_query($conn,$sql) or die("Could not query");
+			$q_list = mysqli_query($connection,$sql) or die("Could not query");
 			$rows= array();
 			while($result=mysqli_fetch_assoc($q_list)) {
 				$result['fn1']=  (strpos($result['function'], 'fn1')!== false) ? "1" : "0";
@@ -49,17 +48,14 @@
 			
 			$qcount = " SELECT count(1) as total  from tb_Employee  WHERE  user_ID = '".$_REQUEST['user_ID']."' "; 
 
-			//$ocount = mysql_query($qcount);
-			//$data=mysql_fetch_assoc($ocount);
-			$ocount = mysqli_query($conn,$qcount);
+			$ocount = mysqli_query($connection,$qcount);
 			$data=mysqli_fetch_assoc($ocount);
 			if($data['total'] > 0 ){
 				$arr = array('status' => 'duplicate'); 
 				echo json_encode($arr);
 			}else{		
 
-				//$objQuery = mysql_query($query_insert) or die(mysql_error());
-				$objQuery = mysqli_query($conn,$query_insert) or die(mysql_error());
+				$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
 				if($objQuery){
 					$arr = array('status' => 'success');  
 					echo json_encode($arr);
@@ -103,17 +99,14 @@
 			$qcount = " SELECT count(1) as total  from tb_Employee  WHERE  user_ID = '".$_REQUEST['user_ID']."' 
 			and employee_ID <> '".$_REQUEST['employee_ID']."' "; 
 
-			//$ocount = mysql_query($qcount);
-			//$data=mysql_fetch_assoc($ocount);
-			$ocount = mysqli_query($conn,$qcount);
+			$ocount = mysqli_query($connection,$qcount);
 			$data=mysqli_fetch_assoc($ocount);
 			if($data['total'] > 0 ){
 				$arr = array('status' => 'duplicate'); 
 				echo json_encode($arr);
 			}else{		
 
-				//$objQuery = mysql_query($query) or die(mysql_error());
-				$objQuery = mysqli_query($conn,$query) or die(mysql_error());			
+				$objQuery = mysqli_query($connection,$query) or die(mysqli_connect_error());
 				if($objQuery){
 					$arr = array('status' => 'success');  
 					echo json_encode($arr);
@@ -129,8 +122,7 @@
 
 			$strSQL = "delete from  tb_Employee  WHERE employee_ID= '".$code."' " ;
 		
-			//$strRs = mysql_query($strSQL);
-			$strRs = mysqli_query($conn,$strSQL);
+			$strRs = mysqli_query($connection,$strSQL);
 
 			if($strRs){
 				$arr = array('status' => 'success');  
@@ -146,14 +138,10 @@
 			$password=$_REQUEST['password'];
 
 			$error="";
-			//$sql = "SELECT u.* FROM tb_Employee u WHERE u.user_ID = '".mysql_real_escape_string($user_ID)."'
-			//	AND u.password = '".mysql_real_escape_string($password)."' ";
-			$sql = "SELECT u.* FROM tb_Employee u WHERE u.user_ID = '".mysqli_real_escape_string($conn,$user_ID)."'
-			AND u.password = '".mysqli_real_escape_string($conn,$password)."' ";
+			$sql = "SELECT u.* FROM tb_Employee u WHERE u.user_ID = '".mysqli_real_escape_string($connection,$user_ID)."'
+				AND u.password = '".mysqli_real_escape_string($connection,$password)."' ";
 
-			//$sql_result = mysql_query ($sql) or die ('request "Could not execute SQL query" '.$sql);
-			//$user = mysql_fetch_assoc($sql_result);			
-			$sql_result = mysqli_query ($conn,$sql) or die ('request "Could not execute SQL query" '.$sql);
+			$sql_result = mysqli_query($connection,$sql) or die ('request "Could not execute SQL query" '.$sql);
 			$user = mysqli_fetch_assoc($sql_result);
 			if(!empty($user)){	
 
@@ -170,11 +158,8 @@
 				$_SESSION['full_name'] = $user['employee_name'] ." ". $user['employee_surname'];
 				$_SESSION['role'] = $user['role'];
 
-				//$query = " UPDATE tb_Employee SET last_login = NOW() WHERE user_ID ='".mysql_real_escape_string($user_ID)."' ";
-				$query = " UPDATE tb_Employee SET last_login = NOW() WHERE user_ID ='".mysqli_real_escape_string($conn,$user_ID)."' ";
-
-				//mysql_query ($query, $connection ) or die ('request "Could not execute SQL query" '.$query);
-				mysqli_query ($conn,$query) or die ('request "Could not execute SQL query" '.$query);
+				$query = " UPDATE tb_Employee SET last_login = NOW() WHERE user_ID ='".mysqli_real_escape_string($connection,$user_ID)."' ";
+				mysqli_query($connection, $query) or die ('request "Could not execute SQL query" '.$query);
 			
 			}else{
 				$error = 'ชื่อผู้ใช้งานหรือรหัสผ่าน ไม่ถูกต้อง !';

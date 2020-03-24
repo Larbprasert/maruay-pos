@@ -1,6 +1,6 @@
 <?php include 'header.php' ;?>
 
-<? 
+<?php 
 
 if($_SESSION['user_info']['fn4']!="1")
 {
@@ -141,7 +141,7 @@ if($_SESSION['user_info']['fn4']!="1")
 					data: { 
 						employee_ID : employee_ID  
 					},
-					url: 'service/user_service.php?method=delete&user_id='+'<? echo $pos_user_id?>',
+					url: 'service/user_service.php?method=delete&user_id='+'<?php echo $pos_user_id?>',
 					success: function(data) {
 						swal.close();
 						$.notify(" ลบรายการ  [ "+name+" ] สำเร็จ !", "success");

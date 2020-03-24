@@ -42,7 +42,7 @@
 									<span class="input-group-addon bg-gray"><b>ประเภทข้อมูล</b></span>
 									<!-- <label>Select</label> -->
 									<select class="form-control " id="h-group" name="group" >
-										<option value=""><? echo $sel_all;?></option>
+										<option value=""><?php echo $sel_all;?></option>
 										<option value="S">จ่ายออกปกติ</option>
 										<option value="R">คืนสินค้า</option>
 										<option value="U">อัพเดทสต๊อก</option>

@@ -33,9 +33,9 @@
 				
 			$sql_cmd .= " ORDER by s.create_date  asc";
 		
-			$q_list = mysql_query($sql_cmd) or die("Could not query");
+			$q_list = mysqli_query($connection,$sql_cmd) or die("Could not query");
 
-			while($result=mysql_fetch_assoc($q_list)) {
+			while($result=mysqli_fetch_assoc($q_list)) {
 				$rows[]=$result;
 			}
 
@@ -45,7 +45,7 @@
 
 			$rows= array();
    			
-			$sql_cmd = "  SELECT d.*  ,  h.total_discount , h.total_amount
+			$sql_cmd = "  SELECT d.*  ,  h.total_discount , h.total_amount , (d.cost*d.qty )total_cost
 			FROM  tb_SaleHeader h  join tb_SaleDetail d
 			on h.saleHeader_ID = d.saleHeader_ID
 			where h.sale_status = 'S' " ;
@@ -66,19 +66,20 @@
 			$total_cost_itm = 0;
 			$total_amount_itm = 0;
 			$total_discount_itm = 0;
-			$q_list = mysql_query($sql_cmd) or die("Could not query");
-			while($result=mysql_fetch_assoc($q_list)) {
+			$q_list = mysqli_query($connection,$sql_cmd) or die("Could not query");
+			while($result=mysqli_fetch_assoc($q_list)) {
 				$rows[]=$result;
-				$total_cost_itm += (float) $result['cost'];
+				// $total_cost_itm += (float) $result['cost'];
+				$total_cost_itm += (float) $result['total_cost'];
 				$total_amount_itm += (float) $result['amount'];
 				$total_discount_itm += (float) $result['discount'];
 			}
 
-			$q_total = mysql_query($sql_total) or die("Could not query");
+			$q_total = mysqli_query($connection,$sql_total) or die("Could not query");
 			
 			$total_amount_hdr = 0;
 			$total_discount_hdr = 0;
-			while($rs=mysql_fetch_assoc($q_total)) {
+			while($rs=mysqli_fetch_assoc($q_total)) {
 				$total_amount_hdr += (float) $rs['total_amount'];
 				$total_discount_hdr += (float) $rs['total_discount'];
 			}
@@ -98,7 +99,7 @@
 
 			$rows= array();
    			
-			$sql_cmd = " SELECT  ROUND(SUM(d.cost),2) total_cost ,  
+			$sql_cmd = " SELECT  ROUND(SUM(d.cost*d.qty),2) total_cost ,  
 			ROUND(SUM(d.discount),2) total_discount_itm  , 
 		   (SELECT ROUND(SUM(i.total_discount),2) FROM tb_SaleHeader i 
 			 WHERE DATE_FORMAT(i.create_date, '%d/%m/%Y') = DATE_FORMAT(d.create_date, '%d/%m/%Y')  
@@ -123,8 +124,8 @@
 			$total_amount_itm = 0;
 			$total_discount_itm = 0;
 			$total_discount_hdr = 0;
-			$q_list = mysql_query($sql_cmd) or die("Could not query");
-			while($result=mysql_fetch_assoc($q_list)) {
+			$q_list = mysqli_query($connection,$sql_cmd) or die("Could not query");
+			while($result=mysqli_fetch_assoc($q_list)) {
 
 				$result['net_amount'] = $result['total_amount']-$result['total_discount_hdr'] ;
 				$result['sum_discount'] = $result['total_discount_itm']+$result['total_discount_hdr'] ;
@@ -158,7 +159,7 @@
    			
 			$sql_cmd = " SELECT
 				h.saleHeader_ID name,
-				ROUND(SUM(d.cost),2)    total_cost, 
+				ROUND(SUM(d.cost*d.qty),2)    total_cost, 
 				ROUND( h.total_discount + SUM(d.discount),2)  sum_discount, 
 				h.total_amount net_amount, 
 				DATE_FORMAT(d.create_date, '%d/%m/%Y')    create_date
@@ -179,8 +180,8 @@
 			$total_cost = 0;
 			$total_amount = 0;
 			$total_discount = 0;
-			$q_list = mysql_query($sql_cmd) or die("Could not query");
-			while($result=mysql_fetch_assoc($q_list)) {
+			$q_list = mysqli_query($connection,$sql_cmd) or die("Could not query");
+			while($result=mysqli_fetch_assoc($q_list)) {
 
 				$result['total_amount'] = $result['net_amount']+$result['sum_discount'] ;
 				$rows[]=$result;

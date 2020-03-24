@@ -30,7 +30,7 @@
 			,'".$priceType."' ,'".$total_discount."','".$total_amount."' ,NULL,'".$user_id."' 
 			,NOW(),'".$sale_status."',NOW(), '".$user_id."' ,'".$pay."', '".$change."' ) ";
 
-			$objQuery = mysql_query($query_insert) or die(mysql_error());
+			$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
 
 			if($objQuery){
 
@@ -47,11 +47,11 @@
 					,'".$item['qty']."' ,'".$item['sell_price']."' ,'".$item['discount']."' ,'".$item['total_price']."'
 					, NOW(), '".$user_id."' ) ";
 
-					$objQuery_detail = mysql_query($query_detail) or die(mysql_error());
+					$objQuery_detail = mysqli_query($connection,$query_detail) or die(mysqli_connect_error());
 
 					if( "INV" == $saleType){
 						$query_stk = " call sp_cutStock('".$item['product_ID']."' ,".$item['qty']." )";
-						$objQuery_stk = mysql_query($query_stk) or die(mysql_error());	
+						$objQuery_stk = mysqli_query($connection,$query_stk) or die(mysqli_connect_error());	
 
 						$new_qty =  (int) $item['old_qty'] - (int) $item['qty'] ;
 
@@ -63,7 +63,7 @@
 							fn_getProductName('".$item['product_ID']."') ,
 						'".$item['old_qty']."' ,'-".$item['qty']."' ,'".$new_qty."' ,  NOW(), '".$user_id."' , 'S' ) ";
 	
-						$objQuery_trans = mysql_query($query_trans) or die(mysql_error());
+						$objQuery_trans = mysqli_query($connection,$query_trans) or die(mysqli_connect_error());
 						
 				 		
 					}
@@ -77,8 +77,8 @@
 
 				$sql = "SELECT `VALUE` as INV_NO FROM tb_PosNum WHERE `TYPE` = '".$saleType."' ";
 
-				$sql_result = mysql_query ($sql) or die ('request "Could not execute SQL query" '.$sql);
-				$obj = mysql_fetch_assoc($sql_result);
+				$sql_result = mysqli_query($connection,$sql) or die ('request "Could not execute SQL query" '.$sql);
+				$obj = mysqli_fetch_assoc($sql_result);
 				if(!empty($obj)){	
 					$inv_no = $obj['INV_NO'];
 				}
@@ -97,7 +97,7 @@
 			$user_id=$_REQUEST['user_id'];
 
 			$query_stk = " call sp_returnStock('".$saleHeader_ID."' , '".$user_id."' )";
-			$objQuery = mysql_query($query_stk) or die(mysql_error());	
+			$objQuery = mysqli_query($connection,$query_stk) or die(mysqli_connect_error());	
 
 			$items = json_decode($_REQUEST['items'], true);
 			foreach ($items as $item) {
@@ -111,7 +111,7 @@
 					'".$item['old_qty_update']."' ,'".$item['qty']."' ,'".$item['new_qty_update']."' , 
 					 NOW(), '".$user_id."' , 'R' ) ";
 
-				$objQuery_detail = mysql_query($query_detail) or die(mysql_error());
+				$objQuery_detail = mysqli_query($connection,$query_detail) or die(mysqli_connect_error());
 
 			}
 

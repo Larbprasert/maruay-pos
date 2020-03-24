@@ -10,9 +10,9 @@
 
 			$sql = " select * from tb_UnitType order by unitType_ID " ;
 
-			$q_list = mysql_query($sql) or die("Could not query");
+			$q_list = mysqli_query($connection,$sql) or die("Could not query");
 			$rows= array();
-			while($result=mysql_fetch_assoc($q_list)) {
+			while($result=mysqli_fetch_assoc($q_list)) {
 				$rows[]=$result;
 			}
 
@@ -22,9 +22,9 @@
 
 			$sql = " select * from tb_Category  order by category_ID  " ;
 
-			$q_list = mysql_query($sql) or die("Could not query");
+			$q_list = mysqli_query($connection,$sql) or die("Could not query");
 			$rows= array();
-			while($result=mysql_fetch_assoc($q_list)) {
+			while($result=mysqli_fetch_assoc($q_list)) {
 				$rows[]=$result;
 			}
 
@@ -35,9 +35,9 @@
 
 			$sql = " select * from tb_Location order by location_ID  " ;
 
-			$q_list = mysql_query($sql) or die("Could not query");
+			$q_list = mysqli_query($connection,$sql) or die("Could not query");
 			$rows= array();
-			while($result=mysql_fetch_assoc($q_list)) {
+			while($result=mysqli_fetch_assoc($q_list)) {
 				$rows[]=$result;
 			}
 
@@ -69,14 +69,14 @@
 			}
 
 
-			$ocount = mysql_query($qcount);
-			$data=mysql_fetch_assoc($ocount);
+			$ocount = mysqli_query($connection,$qcount);
+			$data=mysqli_fetch_assoc($ocount);
 			if($data['total'] > 0 ){
 				$arr = array('status' => 'duplicate'); 
 				echo json_encode($arr);
 			}else{		
 
-				$objQuery = mysql_query($query_insert) or die(mysql_error());
+				$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
 				if($objQuery){
 					$arr = array('status' => 'success');  
 					echo json_encode($arr);
@@ -115,14 +115,14 @@
 			}
 
 
-			$ocount = mysql_query($qcount);
-			$data=mysql_fetch_assoc($ocount);
+			$ocount = mysqli_query($connection,$qcount);
+			$data=mysqli_fetch_assoc($ocount);
 			if($data['total'] > 0 ){
 				$arr = array('status' => 'duplicate'); 
 				echo json_encode($arr);
 			}else{		
 
-				$objQuery = mysql_query($query_insert) or die(mysql_error());
+				$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
 				if($objQuery){
 					$arr = array('status' => 'success');  
 					echo json_encode($arr);
@@ -146,7 +146,7 @@
 			}
 		
 		
-			$strRs = mysql_query($strSQL);
+			$strRs = mysqli_query($connection,$strSQL);
 
 			if($strRs){
 				$arr = array('status' => 'success');  

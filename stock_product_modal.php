@@ -295,7 +295,7 @@
 			total_amount :	getPriceTxt($("#txt-total-cost").html()),
 			remark :	 $("#stock-remark").val(),
 			sale_status :	sale_status,
-			user_id : '<? echo $pos_user_id?>',
+			user_id : '<?php echo $pos_user_id ?>',
 			items: JSON.stringify(stockList)  
 		 }
 

@@ -14,7 +14,7 @@
 
 			$rows= array();
    			
-			$sql_cmd = "  SELECT p.*, TRUNCATE(p.normal_price, 2) n_price,
+			$sql_cmd = "  SELECT p.*, ROUND(p.normal_price, 2) n_price,
 				l.location_name loc_name,
 				c.category_name cat_name,
 				u.unitType_name  unit_name
@@ -61,12 +61,12 @@
 			
 			 $sql_cmd .= " ORDER by p.create_date DESC ";
 	 
-			$q_list = mysql_query($sql_cmd) or die("Could not query");
+			$q_list = mysqli_query($connection,$sql_cmd) or die("Could not query");
 
-			while($result=mysql_fetch_assoc($q_list)) {
+			while($result=mysqli_fetch_assoc($q_list)) {
 				$rows[]=$result;
 			}
-			echo json_encode($rows);
+			echo json_encode($rows, JSON_PRETTY_PRINT);
 
 		}else if("search_sell"==$_REQUEST['method']){
 		
@@ -77,17 +77,17 @@
 				$rows= array();
 				   
 				$sql_cmd = "  SELECT p.product_ID, p.product_Name , p.serial_no  , p.qty as old_qty , 1 as qty ,0 as discount ,
-				 TRUNCATE(p.normal_price, 2) total_price , u.unitType_name as unit_name ,TRUNCATE(p.cost, 2) cost  
-				  , qty_condition , wholesale_flg , TRUNCATE(p.wholesale_price, 2) wholesale_price , " ;
+				 ROUND(p.normal_price, 2) total_price , u.unitType_name as unit_name ,ROUND(p.cost, 2) cost  
+				  , qty_condition , wholesale_flg , ROUND(p.wholesale_price, 2) wholesale_price , " ;
 					
 			 
 				if(!empty( $_REQUEST['ptype']) &&  $_REQUEST['ptype'] == 'P2'){
-					$sql_cmd .= " TRUNCATE(p.special_price_2, 2) sell_price ";  
+					$sql_cmd .= " ROUND(p.special_price_2, 2) sell_price ";  
 				} 
 				else if(!empty( $_REQUEST['ptype']) &&  $_REQUEST['ptype'] == 'P1'){
-					$sql_cmd .= " TRUNCATE(p.special_price_1, 2) sell_price "; 
+					$sql_cmd .= " ROUND(p.special_price_1, 2) sell_price "; 
 				}else {
-					$sql_cmd .= " TRUNCATE(p.normal_price, 2) sell_price "; 
+					$sql_cmd .= " ROUND(p.normal_price, 2) sell_price "; 
 				} 
 
 				$sql_cmd .= " FROM tb_ProductMaster p  
@@ -103,19 +103,19 @@
 				}
 			 
 				
-				$q_list = mysql_query($sql_cmd) or die("Could not query");
+				$q_list = mysqli_query($connection,$sql_cmd) or die("Could not query");
 	
-				while($result=mysql_fetch_assoc($q_list)) {
+				while($result=mysqli_fetch_assoc($q_list)) {
 					$rows[]=$result;
 				}
 				// echo isset( $_REQUEST['name']);
-				echo json_encode($rows);
+				echo json_encode($rows, JSON_PRETTY_PRINT);
 			
 		} else if("return_count"==$_REQUEST['method']){
 			$user_id=$_REQUEST['user_id'];
 			$sql_rest = " SELECT  1  FROM tb_SaleHeader  WHERE sale_status = 'W' and employee_ID = '".$user_id."' " ;
-			$q_list_rest = mysql_query($sql_rest) or die("Could not query");
-			$rest_no = mysql_num_rows($q_list_rest);
+			$q_list_rest = mysqli_query($connection,$sql_rest) or die("Could not query");
+			$rest_no = mysqli_num_rows($q_list_rest);
 
 			echo json_encode($rest_no);
 
@@ -125,9 +125,9 @@
 			 ( SELECT count(d.saleDetail_ID)   from tb_SaleDetail d where d.saleHeader_ID = a.saleHeader_ID ) as total 
 			FROM tb_SaleHeader  a
 			WHERE a.sale_status = 'W' and a.employee_ID = '".$user_id."' order by a.saleHeader_ID" ;
-			$q_list_rest = mysql_query($sql_rest) or die("Could not query");
+			$q_list_rest = mysqli_query($connection,$sql_rest) or die("Could not query");
 			$rows= array();
-			while($result=mysql_fetch_assoc($q_list_rest)) {
+			while($result=mysqli_fetch_assoc($q_list_rest)) {
 				$rows[]=$result;
 			}
 
@@ -135,23 +135,23 @@
 
 		} else if("search_rest_list"==$_REQUEST['method']){
 			$saleHeader_ID=$_REQUEST['saleHeader_ID'];
-			$sql_rest = " SELECT a.* ,  a.price as sell_price , a.amount as total_price 
-			  , p.qty_condition , p.wholesale_flg , TRUNCATE(p.wholesale_price, 2) wholesale_price 
+			$sql_rest = " SELECT @i:=@i+1 AS sorder, a.* ,  a.price as sell_price , a.amount as total_price 
+			  , p.qty_condition , p.wholesale_flg , ROUND(p.wholesale_price, 2) wholesale_price 
 			FROM tb_SaleDetail  a    left join  tb_ProductMaster p
-			ON p.product_ID = a.product_ID
+			ON p.product_ID = a.product_ID JOIN  (SELECT @i:=0) AS r 
 			WHERE a.saleHeader_ID= '".$saleHeader_ID."' " ;
-			$q_list_rest = mysql_query($sql_rest) or die("Could not query");
+			$q_list_rest = mysqli_query($connection,$sql_rest) or die("Could not query");
 			$rows= array();
-			while($result=mysql_fetch_assoc($q_list_rest)) {
+			while($result=mysqli_fetch_assoc($q_list_rest)) {
 				$rows[]=$result;
 			}
 
 				/*  Delete Temp */
 			$strSQL = "DELETE FROM tb_SaleHeader WHERE   saleHeader_ID= '".$saleHeader_ID."' " ;
-			$objQuery = mysql_query($strSQL);
+			$objQuery = mysqli_query($connection,$strSQL);
 
 			$strSQL2 = "DELETE FROM tb_SaleDetail  WHERE   saleHeader_ID= '".$saleHeader_ID."' " ;
-			$objQuery2 = mysql_query($strSQL2);
+			$objQuery2 = mysqli_query($connection,$strSQL2);
 
 			echo json_encode($rows);
 
@@ -166,9 +166,9 @@
 			LEFT JOIN  tb_ProductMaster p   ON p.product_ID = a.product_ID
 			WHERE   a.saleHeader_ID= 'INV-".$saleHeader_ID."' and  h.sale_status = 'S' " ;
 
-			$q_list_rest = mysql_query($sql_rest) or die("Could not query");
+			$q_list_rest = mysqli_query($connection,$sql_rest) or die("Could not query");
 			$rows= array();
-			while($result=mysql_fetch_assoc($q_list_rest)) {
+			while($result=mysqli_fetch_assoc($q_list_rest)) {
 				$rows[]=$result;
 			}
  
@@ -180,9 +180,9 @@
 			$product_ID=$_REQUEST['product_ID'];
 			$user_id=$_REQUEST['user_id'];
 
-			// $strSQL = " delete from tb_ProductMaster  WHERE product_ID= '".$product_ID."' " ;
-			$strSQL = " 	update   tb_ProductMaster  set product_status = 'Inactive'  WHERE product_ID= '".$product_ID."' " ;
-			$strSQL = mysql_query($strSQL);
+			$strSQL = " delete from tb_ProductMaster  WHERE product_ID= '".$product_ID."' " ;
+			//$strSQL = " 	update   tb_ProductMaster  set product_status = 'Inactive'  WHERE product_ID= '".$product_ID."' " ;
+			$objQuery = mysqli_query($connection,$strSQL);
 
 			if($objQuery){
 				$arr = array('status' => 'success');  
@@ -231,8 +231,8 @@
 			// $sale_id = "" ;
 			$strSQL = " SELECT count(1) as total   from tb_ProductMaster a   
 					WHERE  a.product_status = 'Active' and a.product_ID = '".$product_ID."' "; 
-		   $objQuery = mysql_query($strSQL);
-		   $data=mysql_fetch_assoc($objQuery);
+		   $objQuery = mysqli_query($connection,$strSQL);
+		   $data=mysqli_fetch_assoc($objQuery);
 		   if($data['total'] > 0 ){
 			  $arr = array('status' => 'duplicate'); 
 			  echo json_encode($arr);
@@ -285,7 +285,7 @@
 					'".$user_id."'   
 					) ";
 
-				$objQuery = mysql_query($query_insert) or die(mysql_error());
+				$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
 				if($objQuery){
 					$arr = array('status' => 'success');  
 					echo json_encode($arr);
@@ -354,7 +354,7 @@
 			update_by='".$user_id."' 
 			where product_ID='".$product_ID."'";
 
-			$objQuery = mysql_query($query_update) or die(mysql_error());
+			$objQuery = mysqli_query($connection,$query_update) or die(mysqli_connect_error());
 			if($objQuery){
 				$arr = array('status' => 'success');  
 				echo json_encode($arr);
@@ -381,7 +381,7 @@
 			,'U0' ,'0','".$total_amount."' ,NULL,'".$user_id."' 
 			,NOW(),'U',NOW(), '".$user_id."' , '".$remark."' ) ";
 
-			$objQuery = mysql_query($query_insert) or die(mysql_error());
+			$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
 
 			if($objQuery){
 
@@ -396,11 +396,11 @@
 						fn_getProductName('".$item['product_ID']."') ,
 					'".$item['old_qty']."' ,'".$item['qty']."' ,'".$item['new_qty']."' ,  NOW(), '".$user_id."' , 'U' ) ";
 
-					$objQuery_detail = mysql_query($query_detail) or die(mysql_error());
+					$objQuery_detail = mysqli_query($connection,$query_detail) or die(mysqli_connect_error());
 
 					if( "SA" == $saleType){
 						$query_stk = " call sp_addStock('".$item['product_ID']."' ,".$item['qty']." )";
-						$objQuery_stk = mysql_query($query_stk) or die(mysql_error());	
+						$objQuery_stk = mysqli_query($connection,$query_stk) or die(mysqli_connect_error());	
 					}
 
 				}

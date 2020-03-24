@@ -1,11 +1,5 @@
   
 
-  <?
-
-
-	
-	?>
-
 <!-- Modal -->
 <div class="modal fade" tabindex="-1" role="dialog" id="editProductModal" data-backdrop="static">
    <div class="modal-dialog modal-ku">
@@ -52,11 +46,11 @@
                                       <div class="col-sm-8">
 									  <select id="a-category_ID"  name="category_ID" class="form-control m-bot15">
                                               
-									  <?   
+									  <?php   
 											for ($i = 0; $i < count($pos_category); $i++)  {  
 										?>
-												<option value="<? echo $pos_category[$i]['cat_id']?>"><? echo $pos_category[$i]['cat_name']?></option>
-										<?
+												<option value="<?php echo $pos_category[$i]['cat_id']?>"><?php echo $pos_category[$i]['cat_name']?></option>
+										<?php
 											} 
 										?>
 										   </select>
@@ -68,11 +62,11 @@
                                       <label class="col-sm-4 control-label">สถานที่จัดเก็บ </label>
                                       <div class="col-sm-8">                                          
 									 	 <select id="a-location_ID"  name="location_ID" class="form-control m-bot15">
-											 <?   
+											 <?php   
 												for ($i = 0; $i < count($pos_location); $i++)  {  
 											?>
-													<option value="<? echo $pos_location[$i]['loc_id']?>"><? echo $pos_location[$i]['loc_name']?></option>
-											<?  }?>
+													<option value="<?php echo $pos_location[$i]['loc_id']?>"><?php echo $pos_location[$i]['loc_name']?></option>
+											<?php  }?>
 										   </select>
                                       </div>
                                   </div>
@@ -142,11 +136,11 @@
                                       <label class="col-sm-4 control-label">หน่วยนับ  </label>
                                       <div class="col-sm-8">                                          
 									 	 <select   id="a-unitType_ID" name="unitType_ID"  class="form-control m-bot15">
-										 	 <?   
+										 	 <?php   
 												for ($i = 0; $i < count($pos_unit); $i++)  {  
 											?>
-											   <option value="<? echo $pos_unit[$i]['unit_id'] ?>"><? echo $pos_unit[$i]['unit_name'] ?></option>
-											 <? } ?>
+											   <option value="<?php echo $pos_unit[$i]['unit_id'] ?>"><?php echo $pos_unit[$i]['unit_name'] ?></option>
+											 <?php } ?>
 										   </select>
                                       </div>
                                   </div>
@@ -471,10 +465,10 @@
 		$.ajax({
             type: 'POST',
 			data: $('#product-form').serialize(),
-            url: 'service/product_service.php?method='+method+'&user_id='+'<? echo $pos_user_id?>',
+            url: 'service/product_service.php?method='+method+'&user_id='+'<?php echo $pos_user_id?>',
             success: function(data) {
-
-                // console.log(data['status']);
+				
+            	//console.log(data);
 				if(data['status'] == "duplicate"){
 					swal("","รหัสสินค้า ["+$('#a-product_ID').val()+"] มีอยู่แล้ว !" ,"warning");
 				}else 	if(data['status'] == "success"){
@@ -490,12 +484,11 @@
 
 					// setTimeout(function() {
 						$('#editProductModal').modal('hide')
-						$.notify('บันทึก รายการสินค้า สำเร็จ !', 'success' );
+						$.notify('บันทึก รายการสินค้า สำเร็จ !', 'success' );											
 						doSearch();
 					// }, 1000);
 
 				}
-			
             }
         });
   }

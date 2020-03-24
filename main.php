@@ -34,11 +34,11 @@ if($_SESSION['user_info']['fn1']!="1")
 								<i class="fa fa-print"></i> บันทึกและพิมพ์ [F12]
 							</a>
 							
-							<?php if($_SESSION['user_info']['fn4']=="1") { ?>	 
+							<?if($_SESSION['user_info']['fn4']=="1") { ?>	 
 							<a class="btn btn-app bg-olive" id="b-return"  >
 								<i class="fa fa-retweet"></i> คืนสินค้า [F5]
 							</a>
-							<?php }?>
+							<?}?>
 							<a class="btn btn-app bg-orange" id="b-del"  >
 								<i class="fa fa-remove"></i> ลบสินค้า [Del]
 							</a>
@@ -241,7 +241,7 @@ if($_SESSION['user_info']['fn1']!="1")
 								<div class="col-sm-4 border-right pad-5">
 									<div class="description-block">
 										<h5 class="description-header"><i class="fa fa-user"></i> ตำแหน่ง</h5>
-										<span class="description-text" id="m-role"><?php echo $pos_role?></span>
+										<span class="description-text" id="m-role"><? echo $pos_role?></span>
 									</div>
 								</div>
 
@@ -348,7 +348,7 @@ if($_SESSION['user_info']['fn1']!="1")
 			data:[],
 		    columns: [
 				{ 
-					 "data": "product_ID",
+					 "data": "sorder",
 					 "fnCreatedCell" : function(nTd, sData, oData, iRow, iCol) {
 						$(nTd).html(++iRow);
 					}
@@ -390,9 +390,10 @@ if($_SESSION['user_info']['fn1']!="1")
 		      
 		    ],
 		    "aoColumnDefs": [
-		      { "sClass": "text-center", "aTargets": [0,1,4,5,6,7] }
+		      { "sClass": "text-center", "aTargets": [0,1,4,5,6,7] },
+			  { "orderable": false, "targets": [1,2,3,4,5,6,7]}
 		    ],
-			ordering: false,
+			// ordering: false,
 			destroy: true,
 			rowCallback: function (row, data) {},
 			info:     false,
@@ -439,7 +440,7 @@ if($_SESSION['user_info']['fn1']!="1")
 		var total_change = 0;
 		var total_dis = 0;
 		dataList.forEach(data => {
-			// console.log(data['total_price']);
+			// console.log(data);
 			var price =  getPriceTxt(data['sell_price']) ;
 			if(data['wholesale_flg'] == "1" &&   getPriceTxt(data['qty']) >=  getPriceTxt(data['qty_condition']) ){
 				price  = getPriceTxt(data['wholesale_price']) ;
@@ -472,6 +473,7 @@ if($_SESSION['user_info']['fn1']!="1")
 	}
 	
 
+
 	function loadProduct(name){
 		
 		if(name.trim()==""){
@@ -495,6 +497,7 @@ if($_SESSION['user_info']['fn1']!="1")
 				if(data.length > 0){
 					// dataList.push(data[0]);
 					var vdata = data[0];
+					// vdata['sorder'] = dataList.length+1;
 					var isdup = true;
 					dataList.forEach(dt => {
 						 if(dt['product_ID'] == vdata['product_ID']){
@@ -530,17 +533,18 @@ if($_SESSION['user_info']['fn1']!="1")
 		
 		loadReturnList();
 		
-		// label_all.forEach(label => {
-		// 	console.log(label);
-		// });
-
+		var so = 1;
+		dataList.forEach(dt => {
+			dt['sorder'] = so++;
+		});
 
 		calPrice();
 
 		rsTable.clear().draw();
 		rsTable.rows.add(dataList).draw();
+		rsTable.order( [ 0, 'desc' ] ).draw();
 
-		$('#search').val("");
+		$('#search').focus().val("");
 
 		$('#total-txt').html(dataList.length);
 
@@ -605,15 +609,15 @@ if($_SESSION['user_info']['fn1']!="1")
 		}
 	 }
 
-	 var is
 	$(document).keydown(function(e) {
 			// e.preventDefault();
-			// console.log('keyCode: ', e.keyCode);
-			console.log('keyCode: ', e.keyCode);
+			// console.log('keyCode: ', e.keyCode); 
+			if (e.keyCode === 27){
+				$("#search").focus().val('');
+			}
 
-
-		var is_modal = $('#editProductModal,#restProductModal,.sweet-alert').is(':visible');
-			console.log('is_modal: ', is_modal);
+		var is_modal = $('#editProductModal,#restProductModal,#finishModal,.sweet-alert').is(':visible');
+			// console.log('is_modal: ', is_modal);
 		if(!is_modal){
 
 			// console.log('keyCode: ', e.keyCode);
@@ -665,29 +669,58 @@ if($_SESSION['user_info']['fn1']!="1")
 				}
 			}
 
-			if (e.keyCode === 27){
-
-			}
-
-			if (e.keyCode === 13){
-				// e.preventDefault();
-				var is_modal = $('#finishModal').is(':visible');
-				$("#finishModal").modal('hide'); 
-				// $("#search").focus();
-			}
-
 		}
+
+		// console.log('1');
+
+		selfin = true;
+		if (e.keyCode === 13 && $('#finishModal').is(':visible')){
+			var is_modal = $('#finishModal').is(':visible');
+			$("#finishModal").modal('hide'); 
+			$("#search").focus();
+			// console.log('2');
+			selfin =false;
+		}
+
 			// check();
 	});
 
+	var selfin = true;
+
 	$("#search").on('keyup', function (e) {
-		if (e.keyCode === 13 && !$('.sweet-alert').is(':visible')) {
+
+		// console.log('3');
+
+		var is_modal = $('#editProductModal,#restProductModal,#finishModal,.sweet-alert').is(':visible');
+		if (e.keyCode === 13 && !is_modal && selfin) {
+
 			var name = $('#search').val();
+			// console.log('4');
+			if(name.trim()==""){
+				swal("","โปรดระบุ รหัสสินค้า/บาร์โค้ด !", "warning");
+				$('#search').focus();
+				return false;
+			}
+
+
+			var reg = new RegExp('^[a-zA-Z0-9.]+$');
+			if (!reg.test(name)){
+				swal("","กรุณาเปลี่ยนภาษา !", "warning");
+				$('#search').focus().val('');
+				return false;
+			}
 			
+
 			loadProduct(name);
 
 			doSearch();
 		}
+
+		// if ($('#finishModal').is(':visible')){
+		// 	$("#finishModal").modal('hide'); 
+		// }
+
+
 	});
 
 
@@ -699,13 +732,14 @@ if($_SESSION['user_info']['fn1']!="1")
 			total_amount :	$("#p-total-sum").val(),
 			total_discount : $("#p-total-dis").val(),
 			sale_status :	sale_status,
-			user_id : '<?php echo $pos_user_id?>',
+			user_id : '<? echo $pos_user_id?>',
 			pay : getPriceFormat($("#p-pay").val()),
 			change : $('#p-change').val(),
 			items: JSON.stringify(dataList)  
 		 }
 
 		//  console.log(data);
+		
 		
 		$.ajax({
 				data: data,
@@ -731,7 +765,12 @@ if($_SESSION['user_info']['fn1']!="1")
 					doSearch();
 					
 					if(print && sale_status == 'S'){
+						
+						data['inv_no'] = rdata['inv_no'];
+						
+						_PDATA = data;
 						openModalFinish(data);
+
 					}else{
 						var nalert = $(".alert-container") ;
 						nalert.slideDown();
@@ -740,7 +779,7 @@ if($_SESSION['user_info']['fn1']!="1")
 						}, 2000);
 					}
 
-					$("#search").focus();
+					// $("#search").focus();
 
 					$("#p-type").val('P0');
 
@@ -822,6 +861,18 @@ if($_SESSION['user_info']['fn1']!="1")
 	} );
 
 
+	function checkKeyboard(ob,e){
+        re = /\d|\w|[\.\$@\*\\\/\+\-\^\!\(\)\[\]\~\%\&\=\?\>\<\{\}\"\'\,\:\;\_]/g;
+      a = e.key.match(re);
+      if (a == null){
+		// swal("","กรุณาเปลี่ยนภาษา !", "warning");
+        // alert('Error 2:\nNon English keyboard layout is detected!\nSet the keyboard layout to English and try to fill out the field again.');
+        // ob.val('');
+		// e.preventDefault();
+        return false;
+      }
+      return true;
+    } 
 
 
 	function nformat(num) {
@@ -868,6 +919,8 @@ if($_SESSION['user_info']['fn1']!="1")
 							return false
 						}
 
+						//document.getElementById('my-input').focus();
+ 
 						data['qty'] = getPriceTxt(inputValue);
 						doSearch();
 						swal.close();
@@ -904,7 +957,8 @@ if($_SESSION['user_info']['fn1']!="1")
 					});
 
 				}
-
+	 
+				$('.sweet-alert input').select();
 		}
 	} );
 	
@@ -958,7 +1012,7 @@ if($_SESSION['user_info']['fn1']!="1")
 	
     function loadReturnList(){
 		var data = {
-			user_id : '<?php echo $pos_user_id?>',
+			user_id : '<? echo $pos_user_id?>',
 		 }
 
 		$.ajax({
@@ -1011,7 +1065,7 @@ if($_SESSION['user_info']['fn1']!="1")
 	// 	console.log(this.val());
 	// 		// return getInteger(this.val());
 	// });
-
+	
 
 	$(document).ready(function(){
 
@@ -1023,12 +1077,17 @@ if($_SESSION['user_info']['fn1']!="1")
 
 		 setInterval(updateTime, 1000);
 
-		 $("#search").focus();
+		 $("#search").focus().val('');
  
 		$(".alert-container").hide();
 		
 		$("input").attr("autocomplete", "off");
-		// openModalFinish();
+	 
+		
+		$('.modal').on('hidden.bs.modal', function () {
+			$("#search").focus().val('');
+		})
+		
 		 
 	});
 

@@ -1,6 +1,6 @@
 <?php include 'header.php' ;?>
 
-<? 
+<?php 
 
 if($_SESSION['user_info']['fn2']!="1")
 {
@@ -15,8 +15,8 @@ if($_SESSION['user_info']['fn2']!="1")
 
 
 $sql_warn = " SELECT  1  from tb_ProductMaster  where   qty < min_qty " ;
-$q_list_warn = mysql_query($sql_warn) or die("Could not query");
-$pos_warn_no = mysql_num_rows($q_list_warn);
+$q_list_warn = mysqli_query($connection,$sql_warn) or die("Could not query");
+$pos_warn_no = mysqli_num_rows($q_list_warn);
 
     
 
@@ -26,20 +26,20 @@ $pos_location =array();
 
 // **** POS_CATEGORY
 $sql_category = " SELECT  category_ID as cat_id , category_name as cat_name from tb_Category   ORDER by category_ID " ;
-$q_list = mysql_query($sql_category) or die("Could not query");
-while($result=mysql_fetch_array($q_list)) {
+$q_list = mysqli_query($connection,$sql_category) or die("Could not query");
+while($result=mysqli_fetch_array($q_list)) {
 	$pos_category[]=$result;
 }
 
 $sql_loc = " SELECT  location_ID as loc_id , location_name as loc_name from tb_Location   ORDER by location_ID " ;
-$q_list = mysql_query($sql_loc) or die("Could not query");
-while($result=mysql_fetch_array($q_list)) {
+$q_list = mysqli_query($connection,$sql_loc) or die("Could not query");
+while($result=mysqli_fetch_array($q_list)) {
 	$pos_location[]=$result;
 }
 
 $sql_unit = " SELECT  unitType_ID as unit_id , unitType_name as unit_name from tb_UnitType   ORDER by unitType_ID " ;
-$q_list = mysql_query($sql_unit) or die("Could not query");
-while($result=mysql_fetch_array($q_list)) {
+$q_list = mysqli_query($connection,$sql_unit) or die("Could not query");
+while($result=mysqli_fetch_array($q_list)) {
 	$pos_unit[]=$result;
 }
 
@@ -78,7 +78,7 @@ while($result=mysql_fetch_array($q_list)) {
 							
  
 							<a class="btn btn-app bg-maroon pull-right" onclick="doSearch('Y')">
-								<span class="badge bg-red"><? echo $pos_warn_no?></span>
+								<span class="badge bg-red"><?php echo $pos_warn_no?></span>
 								<i class="fa  fa-support"></i> แจ้งเตือนสินค้า
 							</a>
 	
@@ -124,12 +124,12 @@ while($result=mysql_fetch_array($q_list)) {
 							<span class="input-group-addon bg-gray"><b>หมวดหมู่</b></span>
 							<!-- <label>Select</label> -->
 							<select class="form-control " name="group" onchange="doSearch()">
-								<option value=""><? echo $sel_all;?></option>
-								<?   
+								<option value=""><?php echo $sel_all;?></option>
+								<?php   
 									for ($i = 0; $i < count($pos_category); $i++)  {  
 								?>
-										<option value="<? echo $pos_category[$i]['cat_id']?>"><? echo $pos_category[$i]['cat_name']?></option>
-								<?
+										<option value="<?php echo $pos_category[$i]['cat_id']?>"><?php echo $pos_category[$i]['cat_name']?></option>
+								<?php
 									} 
 								?>
 							</select>
@@ -141,12 +141,12 @@ while($result=mysql_fetch_array($q_list)) {
 							<span class="input-group-addon bg-gray"><b>สถานที่จัดเก็บ</b></span>
 							<!-- <label>Select</label> -->
 							<select class="form-control  "  name="location"  onchange="doSearch()">
-								<option value=""><? echo $sel_all;?></option>
-								<?   
+								<option value=""><?php echo $sel_all;?></option>
+								<?php   
 									for ($i = 0; $i < count($pos_location); $i++)  {  
 								?>
-										<option value="<? echo $pos_location[$i]['loc_id']?>"><? echo $pos_location[$i]['loc_name']?></option>
-								<?
+										<option value="<?php echo $pos_location[$i]['loc_id']?>"><?php echo $pos_location[$i]['loc_name']?></option>
+								<?php
 									} 
 								?>
 							</select>
@@ -322,19 +322,13 @@ while($result=mysql_fetch_array($q_list)) {
 						
 				$.ajax({
 					type: 'POST',
-					data: $('#product-form').serialize(),
-					url: 'service/product_service.php?method=del_product',
+					data: data ,
+					url: 'service/product_service.php?method=del_product&user_id='+'<?php echo $pos_user_id?>',
 					success: function(data) {
 
-						swal({
-
-							title: 'บันทึกรายการสินค้าสำเร็จ !',
-							type: 'success',
-							closeOnConfirm: false 
-						}, function () {
-							// $('#editProductModal').modal('hide')
+					 
 							doSearch();
-						}); 
+						 
 					}
 
 				});	
@@ -379,8 +373,8 @@ while($result=mysql_fetch_array($q_list)) {
 			// "bScrollCollapse": true,
 			// "sScrollXInner": "100%",
 			language : DT_TH['language'],
-			// searching:false,
 			pageLength:   50,
+			autoWidth : false,
 			processing: true,
         	// serverSide: true,
 			data:[],
