@@ -32,7 +32,9 @@
 
 			// echo $query_insert;
 
-			$objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
+			// $objQuery = mysqli_query($connection,$query_insert) or die(mysqli_connect_error());
+			$objQuery = mysqli_query($connection,$query_insert) or die ('request "Could not execute SQL query" '.$query_insert);		
+			// $objQuery = mysqli_query($connection,$query_insert);			
 
 			if($objQuery){
 
@@ -49,11 +51,15 @@
 					,'".$item['qty']."' ,'".$item['sell_price']."' ,'".$item['discount']."' ,'".$item['total_price']."'
 					, NOW(), '".$user_id."' ) ";
 
-					$objQuery_detail = mysqli_query($connection,$query_detail) or die(mysqli_connect_error());
+					// $objQuery_detail = mysqli_query($connection,$query_detail) or die(mysqli_connect_error());
+					$objQuery_detail = mysqli_query($connection,$query_detail) or die ('request "Could not execute SQL query" '.$query_detail);					
+					//$objQuery_detail = mysqli_query($connection,$query_detail);
 
 					if( "INV" == $saleType){
 						$query_stk = " call sp_cutStock('".$item['product_ID']."' ,".$item['qty']." )";
-						$objQuery_stk = mysqli_query($connection,$query_stk) or die(mysqli_connect_error());	
+						// $objQuery_stk = mysqli_query($connection,$query_stk) or die(mysqli_connect_error());
+						$objQuery_stk = mysqli_query($connection,$query_stk) or die ('request "Could not execute SQL query" '.$query_stk);						
+						// $objQuery_stk = mysqli_query($connection,$query_stk);	
 
 						$new_qty =  (int) $item['old_qty'] - (int) $item['qty'] ;
 
@@ -65,20 +71,20 @@
 							fn_getProductName('".$item['product_ID']."') ,
 						'".$item['old_qty']."' ,'-".$item['qty']."' ,'".$new_qty."' ,  NOW(), '".$user_id."' , 'S' ) ";
 	
-						$objQuery_trans = mysqli_query($connection,$query_trans) or die(mysqli_connect_error());
+						// $objQuery_trans = mysqli_query($connection,$query_trans) or die(mysqli_connect_error());
+						$objQuery_trans = mysqli_query($connection,$query_trans) or die ('request "Could not execute SQL query" '.$query_trans);						
+						// $objQuery_trans = mysqli_query($connection,$query_trans);
 						
-				 		
 					}
 
 				}
 
 			}
 
-
 			if($objQuery && $objQuery_detail){
 
-				$sql = "SELECT `VALUE` as INV_NO FROM tb_PosNum WHERE `TYPE` = '".$saleType."' ";
-
+				$sql = "select `VALUE` as INV_NO FROM tb_PosNum WHERE `TYPE` = '".$saleType."' ";
+			
 				$sql_result = mysqli_query($connection,$sql) or die ('request "Could not execute SQL query" '.$sql);
 				$obj = mysqli_fetch_assoc($sql_result);
 				if(!empty($obj)){	
