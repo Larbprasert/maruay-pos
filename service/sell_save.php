@@ -40,16 +40,40 @@
 
 				$items = json_decode($_REQUEST['items'], true);
 				foreach ($items as $item) {
+					
+/* Issue get price between wholesale_price and sell_price*/
+					if($item['wholesale_flg'] == "1" &&  $item['qty'] >=  $item['qty_condition']){
+							$query_detail = "  insert into  `tb_SaleDetail` ( `saleHeader_ID` , `product_ID`
+							, `product_Name` , unit_name , cost, old_qty, `qty`, `price`,`discount`,`amount` ,`create_date`, `create_by` ) 
+							values (  
+							( SELECT `VALUE` FROM tb_PosNum WHERE `TYPE` = '".$saleType."' ) ,  
+							'".$item['product_ID']."' 
+							,'".$item['product_Name']."'
+							,'".$item['unit_name']."' ,'".$item['cost']."'  ,'".$item['old_qty']."' 
+							,'".$item['qty']."' ,'".$item['wholesale_price']."' ,'".$item['discount']."' ,'".$item['total_price']."'
+							, NOW(), '".$user_id."' ) ";
+					}else{
+							$query_detail = "  insert into  `tb_SaleDetail` ( `saleHeader_ID` , `product_ID`
+							, `product_Name` , unit_name , cost, old_qty, `qty`, `price`,`discount`,`amount` ,`create_date`, `create_by` ) 
+							values (  
+							( SELECT `VALUE` FROM tb_PosNum WHERE `TYPE` = '".$saleType."' ) ,  
+							'".$item['product_ID']."' 
+							,'".$item['product_Name']."'
+							,'".$item['unit_name']."' ,'".$item['cost']."'  ,'".$item['old_qty']."' 
+							,'".$item['qty']."' ,'".$item['sell_price']."' ,'".$item['discount']."' ,'".$item['total_price']."'
+							, NOW(), '".$user_id."' ) ";
+					}
  
-					$query_detail = "  insert into  `tb_SaleDetail` ( `saleHeader_ID` , `product_ID`
-					, `product_Name` , unit_name , cost, old_qty, `qty`, `price`,`discount`,`amount` ,`create_date`, `create_by` ) 
-					values (  
-						( SELECT `VALUE` FROM tb_PosNum WHERE `TYPE` = '".$saleType."' ) ,  
-						 '".$item['product_ID']."' 
-						,'".$item['product_Name']."'
-						,'".$item['unit_name']."' ,'".$item['cost']."'  ,'".$item['old_qty']."' 
-					,'".$item['qty']."' ,'".$item['sell_price']."' ,'".$item['discount']."' ,'".$item['total_price']."'
-					, NOW(), '".$user_id."' ) ";
+					// $query_detail = "  insert into  `tb_SaleDetail` ( `saleHeader_ID` , `product_ID`
+					// , `product_Name` , unit_name , cost, old_qty, `qty`, `price`,`discount`,`amount` ,`create_date`, `create_by` ) 
+					// values (  
+					// 	( SELECT `VALUE` FROM tb_PosNum WHERE `TYPE` = '".$saleType."' ) ,  
+					// 	 '".$item['product_ID']."' 
+					// 	,'".$item['product_Name']."'
+					// 	,'".$item['unit_name']."' ,'".$item['cost']."'  ,'".$item['old_qty']."' 
+					// ,'".$item['qty']."' ,'".$item['sell_price']."' ,'".$item['discount']."' ,'".$item['total_price']."'
+					// , NOW(), '".$user_id."' ) ";
+/* Issue get price between wholesale_price and sell_price*/
 
 					// $objQuery_detail = mysqli_query($connection,$query_detail) or die(mysqli_connect_error());
 					$objQuery_detail = mysqli_query($connection,$query_detail) or die ('request "Could not execute SQL query" '.$query_detail);					

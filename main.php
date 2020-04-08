@@ -444,6 +444,7 @@ if($_SESSION['user_info']['fn1']!="1")
 			var price =  getPriceTxt(data['sell_price']) ;
 			if(data['wholesale_flg'] == "1" &&   getPriceTxt(data['qty']) >=  getPriceTxt(data['qty_condition']) ){
 				price  = getPriceTxt(data['wholesale_price']) ;
+				// data['sell_price'] = data['wholesale_price'];
 			}
 
 			data['total_price'] = (getPriceTxt(data['qty']) * price) - getPriceTxt(data['discount']);
